@@ -1,4 +1,6 @@
 flask
+gunicorn
 requests
-pillow
+python-dotenv
 cloudinary
+pillow
