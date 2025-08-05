@@ -1,0 +1,6 @@
+
+flask
+requests
+cloudinary
+pillow
+pillow-heif
