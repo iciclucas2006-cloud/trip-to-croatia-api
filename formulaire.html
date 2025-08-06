@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulaire Voyage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 1rem; background: #f0f0f0; }
+    label { display: block; margin-top: 1rem; }
+    input, textarea, button {
+      width: 100%; padding: 0.8rem; margin-top: 0.3rem;
+      border: 1px solid #ccc; border-radius: 0.5rem;
+    }
+    button { background: #007bff; color: white; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<h2>Ajouter une étape</h2>
+
+<form id="tripForm">
+  <label>Lieu : <input type="text" name="lieu" required></label>
+  <label>Description : <textarea name="description" required></textarea></label>
+  <label>Date et Heure : <input type="datetime-local" name="heure" required></label>
+  <label>Adresse (optionnelle) : <input type="text" name="adresse" id="adresse"></label>
+  <label>Photo (facultatif) : <input type="file" name="photo" accept="image/*"></label>
+  <button type="submit">Envoyer</button>
+</form>
+
+<p id="status"></p>
+
+<script>
+const form = document.getElementById("tripForm");
+const status = document.getElementById("status");
+
+async function geocodeAddress(address) {
+  const res = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address));
+  const data = await res.json();
+  if (data.length > 0) {
+    return { lat: data[0].lat, lon: data[0].lon };
+  } else {
+    throw new Error("Adresse introuvable");
+  }
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  status.textContent = "⏳ Envoi en cours...";
+
+  const formData = new FormData(form);
+  const adresse = document.getElementById("adresse").value;
+
+  async function envoyer(lat, lon) {
+    formData.append("latitude", lat);
+    formData.append("longitude", lon);
+
+    const response = await fetch("https://trip-to-croatia-api.onrender.com/upload", {
+      method: "POST",
+      body: formData
+    });
+
+    if (response.ok) {
+      status.textContent = "✅ Étape envoyée avec succès !";
+      form.reset();
+    } else {
+      const err = await response.json();
+      status.textContent = "❌ Erreur : " + (err.error || "Échec");
+    }
+  }
+
+  try {
+    if (adresse) {
+      const coords = await geocodeAddress(adresse);
+      envoyer(coords.lat, coords.lon);
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        pos => envoyer(pos.coords.latitude, pos.coords.longitude),
+        () => status.textContent = "❌ Position GPS refusée."
+      );
+    }
+  } catch (err) {
+    status.textContent = "❌ Erreur : " + err.message;
+  }
+});
+</script>
+
+</body>
+</html>
