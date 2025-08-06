@@ -1,3 +1,4 @@
+from flask_cors import CORS
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from PIL import Image
@@ -23,6 +24,7 @@ GOOGLE_GEOCODE_API_KEY = None  # ajoute une clé si tu veux du géocodage préci
 # Init
 cloudinary.config(**CLOUDINARY_CONFIG)
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
