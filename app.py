@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 AIRTABLE_TOKEN = "patSNphd12Ml6TU0M"
-BASE_ID = "UXYgkktrdoWw"
+BASE_ID = "appDqUXYgkktrdoWw"
 TABLE_ID = "tblWZ46gqRnAnf2bd"
 
 @app.route("/")
