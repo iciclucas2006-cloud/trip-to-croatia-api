@@ -1,7 +1,1 @@
-flask
-gunicorn
-requests
-pillow
-python-dotenv
-cloudinary
-flask-cors
+
