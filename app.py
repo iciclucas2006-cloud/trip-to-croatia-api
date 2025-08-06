@@ -58,8 +58,10 @@ def upload():
         resp = requests.post(airtable_url, headers=headers, json=data)
 
         if resp.status_code != 200:
-    print("🛑 ERREUR AIRTABLE :", resp.status_code, resp.text)
+    print("🛑 ERREUR AIRTABLE :", resp.status_code)
+    print("💬 Message :", resp.text)
     return jsonify({"error": "Erreur Airtable", "details": resp.text}), 400
+
 
         return jsonify({"status": "ok"}), 200
     except Exception as e:
